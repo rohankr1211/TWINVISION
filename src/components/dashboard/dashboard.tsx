@@ -221,7 +221,7 @@ export default function Dashboard() {
       <main className="flex-1 overflow-auto p-4 md:p-6">
         <div className="grid gap-4 md:gap-6 xl:grid-cols-3">
           <div className="grid gap-4 md:gap-6 xl:col-span-2">
-            <VisualizationPanel />
+            <VisualizationPanel history={history} selectedMachineId={selectedMachineId} />
             <MonitoringPanel machines={displayedState.machines} />
             <ReplayPanel 
                 historyLength={history.length}

@@ -1,22 +1,80 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import Image from 'next/image';
+import * as React from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { HistoryEntry } from '@/lib/types';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from '@/components/ui/chart';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Thermometer, Zap, Gauge } from 'lucide-react';
 
-export default function VisualizationPanel() {
+interface VisualizationPanelProps {
+    history: HistoryEntry[];
+    selectedMachineId: string;
+}
+
+const chartConfig = {
+    temperature: {
+        label: 'Temperature',
+        color: 'hsl(var(--chart-1))',
+        icon: Thermometer,
+    },
+    load: {
+        label: 'Load',
+        color: 'hsl(var(--chart-2))',
+        icon: Gauge,
+    },
+    speed: {
+        label: 'Speed',
+        color: 'hsl(var(--chart-5))',
+        icon: Zap,
+    },
+} satisfies ChartConfig;
+
+export default function VisualizationPanel({ history, selectedMachineId }: VisualizationPanelProps) {
+    const chartData = React.useMemo(() => {
+        return history.map(entry => {
+            const machine = entry.machines.find(m => m.id === selectedMachineId);
+            return {
+                time: entry.time,
+                temperature: machine?.temperature ?? 0,
+                load: machine?.load ?? 0,
+                speed: machine?.speed ?? 0,
+            };
+        });
+    }, [history, selectedMachineId]);
+
+    const selectedMachine = history[0]?.machines.find(m => m.id === selectedMachineId);
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Manufacturing Line Overview</CardTitle>
+        <CardTitle>Historical Data: {selectedMachine?.name ?? 'Machine'}</CardTitle>
+        <CardDescription>
+            Sensor data for the last {Math.min(history.length, 300)} seconds.
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="relative aspect-video w-full overflow-hidden rounded-lg border">
-          <Image
-            src="https://images.unsplash.com/photo-1567789884554-0b844b597180?q=80&w=2070&auto=format&fit=crop"
-            alt="3D visualization of a manufacturing line"
-            layout="fill"
-            objectFit="cover"
-            data-ai-hint="manufacturing line factory"
-          />
-        </div>
+        <ChartContainer config={chartConfig} className="h-[300px] w-full">
+            <ResponsiveContainer>
+                <LineChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis 
+                        dataKey="time" 
+                        tickFormatter={(value) => `${value}s`}
+                        axisLine={false}
+                        tickLine={false}
+                    />
+                    <YAxis yAxisId="left" orientation="left" stroke="hsl(var(--chart-1))" hide />
+                    <YAxis yAxisId="right" orientation="right" stroke="hsl(var(--chart-2))" hide />
+                    <Tooltip 
+                        cursor={{strokeDasharray: '3 3'}}
+                        content={<ChartTooltipContent indicator="dot" />} 
+                    />
+                    <Legend />
+                    <Line yAxisId="left" type="monotone" dataKey="temperature" stroke="hsl(var(--chart-1))" strokeWidth={2} dot={false} name="Temperature (°C)" />
+                    <Line yAxisId="right" type="monotone" dataKey="load" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={false} name="Load (kg)" />
+                    <Line yAxisId="right" type="monotone" dataKey="speed" stroke="hsl(var(--chart-5))" strokeWidth={2} dot={false} name="Speed (RPM)" />
+                </LineChart>
+            </ResponsiveContainer>
+        </ChartContainer>
       </CardContent>
     </Card>
   );
