@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview Predicts potential machine failures based on simulated sensor data.
@@ -11,7 +10,7 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-export const PredictFailureInputSchema = z.object({
+const PredictFailureInputSchema = z.object({
   temperature: z.number().describe('The temperature of the machine component.'),
   load: z.number().describe('The load on the machine component.'),
   speed: z.number().describe('The speed of the machine component.'),
@@ -19,12 +18,16 @@ export const PredictFailureInputSchema = z.object({
 });
 export type PredictFailureInput = z.infer<typeof PredictFailureInputSchema>;
 
-export const PredictFailureOutputSchema = z.object({
+const PredictFailureOutputSchema = z.object({
   failureType: z.string().describe('The predicted type of failure.'),
   estimatedTime: z.string().describe('The estimated time of failure occurrence.'),
   confidenceScore: z.number().describe('The confidence score of the prediction (0-1).'),
 });
 export type PredictFailureOutput = z.infer<typeof PredictFailureOutputSchema>;
+
+export async function predictFailure(input: PredictFailureInput): Promise<PredictFailureOutput> {
+  return predictFailureFlow(input);
+}
 
 const predictFailurePrompt = ai.definePrompt({
   name: 'predictFailurePrompt',
@@ -57,7 +60,3 @@ const predictFailureFlow = ai.defineFlow(
     return output!;
   }
 );
-
-export async function predictFailure(input: PredictFailureInput): Promise<PredictFailureOutput> {
-    return predictFailureFlow(input);
-}
