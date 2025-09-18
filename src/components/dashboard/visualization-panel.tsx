@@ -12,17 +12,17 @@ interface VisualizationPanelProps {
 
 const chartConfig = {
     temperature: {
-        label: 'Temperature',
+        label: '温度',
         color: 'hsl(var(--chart-1))',
         icon: Thermometer,
     },
     load: {
-        label: 'Load',
+        label: '負荷',
         color: 'hsl(var(--chart-2))',
         icon: Gauge,
     },
     speed: {
-        label: 'Speed',
+        label: '回転数',
         color: 'hsl(var(--chart-5))',
         icon: Zap,
     },
@@ -46,9 +46,9 @@ export default function VisualizationPanel({ history, selectedMachineId }: Visua
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Historical Data: {selectedMachine?.name ?? 'Machine'}</CardTitle>
+        <CardTitle>履歴データ: {selectedMachine?.name ?? '機器'}</CardTitle>
         <CardDescription>
-            Sensor data for the last {Math.min(history.length, 300)} seconds.
+            直近 {Math.min(history.length, 300)} 秒間のセンサーデータ。
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -69,9 +69,9 @@ export default function VisualizationPanel({ history, selectedMachineId }: Visua
                         content={<ChartTooltipContent indicator="dot" />} 
                     />
                     <Legend />
-                    <Line yAxisId="left" type="monotone" dataKey="temperature" stroke="hsl(var(--chart-1))" strokeWidth={2} dot={false} name="Temperature (°C)" />
-                    <Line yAxisId="right" type="monotone" dataKey="load" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={false} name="Load (kg)" />
-                    <Line yAxisId="right" type="monotone" dataKey="speed" stroke="hsl(var(--chart-5))" strokeWidth={2} dot={false} name="Speed (RPM)" />
+                    <Line yAxisId="left" type="monotone" dataKey="temperature" stroke="hsl(var(--chart-1))" strokeWidth={2} dot={false} name="温度 (°C)" />
+                    <Line yAxisId="right" type="monotone" dataKey="load" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={false} name="負荷 (kg)" />
+                    <Line yAxisId="right" type="monotone" dataKey="speed" stroke="hsl(var(--chart-5))" strokeWidth={2} dot={false} name="回転数 (RPM)" />
                 </LineChart>
             </ResponsiveContainer>
         </ChartContainer>

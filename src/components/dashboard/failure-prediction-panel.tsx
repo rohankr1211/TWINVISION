@@ -21,17 +21,17 @@ export default function FailurePredictionPanel({ machines, prediction, isLoading
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
             <Wand2 className="h-5 w-5 text-primary" />
-            AI Failure Prediction
+            AI 故障予測
         </CardTitle>
         <CardDescription>
-            Use AI to predict potential failures based on current sensor data.
+            現在のセンサー値に基づき、AI が潜在的な故障を予測します。
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center gap-2">
             <Select value={selectedMachineId} onValueChange={setSelectedMachineId} disabled={isLoading}>
                 <SelectTrigger id="predict-machine-select" className="flex-grow">
-                    <SelectValue placeholder="Select a machine" />
+                    <SelectValue placeholder="機器を選択" />
                 </SelectTrigger>
                 <SelectContent>
                     {machines.map(machine => (
@@ -43,7 +43,7 @@ export default function FailurePredictionPanel({ machines, prediction, isLoading
             </Select>
             <Button onClick={() => onPredict(selectedMachineId)} disabled={isLoading}>
                 {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                Predict
+                予測する
             </Button>
         </div>
 
@@ -51,22 +51,22 @@ export default function FailurePredictionPanel({ machines, prediction, isLoading
             {isLoading && (
                 <div className="flex h-full flex-col items-center justify-center">
                     <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                    <p className="mt-2 text-sm text-muted-foreground">Analyzing data...</p>
+                    <p className="mt-2 text-sm text-muted-foreground">データを分析しています…</p>
                 </div>
             )}
             {!isLoading && prediction && (
                  <div className="space-y-3 text-left">
                     <div>
-                        <p className="text-sm font-medium text-muted-foreground">Failure Type</p>
+                        <p className="text-sm font-medium text-muted-foreground">故障タイプ</p>
                         <p className="text-lg font-semibold">{prediction.failureType}</p>
                     </div>
                      <div>
-                        <p className="text-sm font-medium text-muted-foreground">Estimated Time</p>
+                        <p className="text-sm font-medium text-muted-foreground">推定時刻</p>
                         <p className="font-semibold">{prediction.estimatedTime}</p>
                     </div>
                      <div>
                         <div className="flex items-center justify-between">
-                            <p className="text-sm font-medium text-muted-foreground">Confidence</p>
+                            <p className="text-sm font-medium text-muted-foreground">確信度</p>
                             <p className="font-semibold">{(prediction.confidenceScore * 100).toFixed(0)}%</p>
                         </div>
                         <Progress value={prediction.confidenceScore * 100} className="h-2" />
@@ -75,7 +75,7 @@ export default function FailurePredictionPanel({ machines, prediction, isLoading
             )}
             {!isLoading && !prediction && (
                 <div className="flex h-full items-center justify-center">
-                    <p className="text-sm text-muted-foreground">Run a prediction to see results.</p>
+                    <p className="text-sm text-muted-foreground">予測を実行して結果を表示します。</p>
                 </div>
             )}
         </div>

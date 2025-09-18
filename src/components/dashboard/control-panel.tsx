@@ -24,14 +24,14 @@ export default function ControlPanel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>System Controls</CardTitle>
+        <CardTitle>システム制御</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="machine-select">Target Machine</Label>
+          <Label htmlFor="machine-select">対象機器</Label>
           <Select value={selectedMachineId} onValueChange={onMachineSelect} disabled={!isRunning}>
             <SelectTrigger id="machine-select">
-              <SelectValue placeholder="Select a machine" />
+              <SelectValue placeholder="機器を選択" />
             </SelectTrigger>
             <SelectContent>
               {machines.map(machine => (
@@ -44,7 +44,7 @@ export default function ControlPanel({
         </div>
         <div className="space-y-2">
             <div className="flex justify-between">
-                <Label htmlFor="speed-slider">Adjust Speed (RPM)</Label>
+                <Label htmlFor="speed-slider">回転数の調整 (RPM)</Label>
                 <span className="text-sm font-medium">{selectedMachine?.speed.toFixed(0) ?? 0}</span>
             </div>
             <Slider

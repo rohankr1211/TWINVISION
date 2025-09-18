@@ -16,22 +16,22 @@ export default function AlertsPanel({ alerts }: AlertsPanelProps) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-destructive" />
-            Alert Log
+            アラート履歴
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">
           {alerts.length === 0 ? (
              <div className="flex h-full items-center justify-center text-muted-foreground">
-                No alerts to display.
+                表示するアラートはありません。
              </div>
           ) : (
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Severity</TableHead>
-                        <TableHead>Message</TableHead>
-                        <TableHead className="text-right">Time</TableHead>
+                        <TableHead>重大度</TableHead>
+                        <TableHead>メッセージ</TableHead>
+                        <TableHead className="text-right">時刻</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>

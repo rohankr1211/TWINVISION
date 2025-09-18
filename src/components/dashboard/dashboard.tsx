@@ -5,7 +5,6 @@ import { Factory, Bot, Cog, Server, Play, Pause, RefreshCw, Loader2 } from 'luci
 import { useReducer, useState, useEffect, useRef } from 'react';
 
 import type { Machine, Alert, SimulationState, HistoryEntry, Prediction } from '@/lib/types';
-import { predictFailure } from '@/ai/flows/predict-failure';
 import { useToast } from "@/hooks/use-toast"
 
 import VisualizationPanel from './visualization-panel';
@@ -122,13 +121,13 @@ export default function Dashboard() {
         const newAlerts: Alert[] = [];
         state.machines.forEach(m => {
           if (m.temperature > 95 && Math.random() < 0.2) {
-            newAlerts.push({id: crypto.randomUUID(), machineId: m.id, machineName: m.name, message: `Critical Temperature: ${m.temperature.toFixed(1)}°C`, timestamp: new Date().toISOString(), severity: 'critical' });
+            newAlerts.push({id: crypto.randomUUID(), machineId: m.id, machineName: m.name, message: `危険: 高温 ${m.temperature.toFixed(1)}°C`, timestamp: new Date().toISOString(), severity: 'critical' });
           }
           if (m.load > 450 && Math.random() < 0.2) {
-            newAlerts.push({id: crypto.randomUUID(), machineId: m.id, machineName: m.name, message: `Critical Load: ${m.load.toFixed(1)}kg`, timestamp: new Date().toISOString(), severity: 'critical' });
+            newAlerts.push({id: crypto.randomUUID(), machineId: m.id, machineName: m.name, message: `危険: 高負荷 ${m.load.toFixed(1)}kg`, timestamp: new Date().toISOString(), severity: 'critical' });
           }
           if (m.speed > 3500 && Math.random() < 0.2) {
-            newAlerts.push({id: crypto.randomUUID(), machineId: m.id, machineName: m.name, message: `Warning: High Speed: ${m.speed.toFixed(0)}RPM`, timestamp: new Date().toISOString(), severity: 'warning' });
+            newAlerts.push({id: crypto.randomUUID(), machineId: m.id, machineName: m.name, message: `警告: 高回転数 ${m.speed.toFixed(0)}RPM`, timestamp: new Date().toISOString(), severity: 'warning' });
           }
         });
         
@@ -180,19 +179,25 @@ export default function Dashboard() {
     setIsPredicting(true);
     setPrediction(null);
     try {
-        const result = await predictFailure({
-            temperature: machine.temperature,
-            load: machine.load,
-            speed: machine.speed,
-            timestamp: new Date().toISOString(),
+        const res = await fetch('/api/predict', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                temperature: machine.temperature,
+                load: machine.load,
+                speed: machine.speed,
+                timestamp: new Date().toISOString(),
+            }),
         });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const result: Prediction = await res.json();
         setPrediction(result);
     } catch (error) {
-        console.error("Failure prediction failed:", error);
+        console.error("故障予測に失敗しました:", error);
         toast({
             variant: "destructive",
-            title: "Prediction Error",
-            description: "Could not get a failure prediction at this time.",
+            title: "予測エラー",
+            description: "現在、故障予測を取得できませんでした。",
         })
     } finally {
         setIsPredicting(false);
@@ -209,11 +214,11 @@ export default function Dashboard() {
         <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={() => state.isRunning ? dispatch({type: 'STOP'}) : dispatch({type: 'START'})}>
                 {state.isRunning ? <Pause className="mr-2 h-4 w-4"/> : <Play className="mr-2 h-4 w-4"/>}
-                {state.isRunning ? 'Pause Sim' : 'Start Sim'}
+                {state.isRunning ? '一時停止' : '開始'}
             </Button>
             <Button variant="destructive" size="sm" onClick={handleReset}>
                 <RefreshCw className="mr-2 h-4 w-4"/>
-                Reset
+                リセット
             </Button>
         </div>
       </header>

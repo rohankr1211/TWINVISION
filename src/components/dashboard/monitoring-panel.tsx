@@ -10,7 +10,7 @@ export default function MonitoringPanel({ machines }: MonitoringPanelProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Real-Time Monitoring</CardTitle>
+        <CardTitle>リアルタイム監視</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
